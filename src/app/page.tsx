@@ -1,103 +1,73 @@
-import Image from "next/image";
+// app/page.tsx
+import Link from "next/link";
+import { listPosts } from "@/lib/store";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const posts = await listPosts(100);
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <main className="max-w-3xl mx-auto px-4 py-10">
+      <h1 className="text-3xl font-bold mb-2">{process.env.SITE_NAME}</h1>
+      <p className="text-sm text-gray-600 mb-8">
+        Apartment-friendly workouts & gear that actually fit your space.
+      </p>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      <section className="mb-8 grid grid-cols-3 gap-4">
+        <div className="rounded-lg border p-6 text-center">
+          <div className="text-2xl font-semibold">{posts.length}</div>
+          <div className="text-xs text-gray-600">Articles</div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+        <div className="rounded-lg border p-6 text-center">
+          <div className="text-2xl font-semibold">24/7</div>
+          <div className="text-xs text-gray-600">Publishing</div>
+        </div>
+        <div className="rounded-lg border p-6 text-center">
+          <div className="text-2xl font-semibold">100%</div>
+          <div className="text-xs text-gray-600">Apartment-Friendly</div>
+        </div>
+      </section>
+
+      <section className="rounded-lg border p-6">
+        <h2 className="text-xl font-semibold mb-4">Latest Articles</h2>
+        {posts.length === 0 ? (
+          <div className="text-center text-gray-600">
+            No posts yet
+            <div className="mt-4">
+              <GenerateButton />
+            </div>
+          </div>
+        ) : (
+          <ul className="space-y-4">
+            {posts.map((p: any) => (
+              <li key={p.slug}>
+                <Link className="text-blue-600 hover:underline" href={`/${p.slug}`}>{p.title}</Link>
+                <div className="text-xs text-gray-500">
+                  {new Date(p.date).toLocaleDateString()}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <footer className="text-center text-sm text-gray-500 mt-10">
+        Powered by AI • Built for apartment dwellers
       </footer>
-    </div>
+    </main>
+  );
+}
+
+function GenerateButton() {
+  return (
+    <form action="/api/generate" method="post">
+      <button
+        className="px-4 py-2 rounded bg-blue-600 text-white"
+        type="submit"
+      >
+        Generate Article
+      </button>
+    </form>
   );
 }
