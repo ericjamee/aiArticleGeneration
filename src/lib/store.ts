@@ -4,21 +4,31 @@ import { kv } from "@vercel/kv";
 export async function savePost(slug: string, meta: any, content: string) {
   // store post body + meta in a hash
   await kv.hset(`post:${slug}`, { ...meta, content });
-  // index by time for easy listing (newest first)
-  await kv.zadd("posts:index", {
-    score: Date.parse(meta.date),
-    member: slug,
-  });
+  // store in sorted set for time-based listing
+  await kv.zadd("posts:index", { score: Date.parse(meta.date), member: slug });
 }
 
 export async function listPosts(limit = 50, offset = 0) {
-  const slugs = await kv.zrevrange("posts:index", offset, offset + limit - 1);
-  const rows = await Promise.all(slugs.map((s) => kv.hgetall(`post:${s}`)));
-  return rows.map((r: any, i) => ({ ...r, slug: slugs[i] }));
+  // Get all posts sorted by date (newest first)
+  const slugs = await kv.zrange("posts:index", offset, offset + limit - 1, {
+    rev: true // reverse order to get newest first
+  });
+  
+  if (!slugs.length) return [];
+  
+  // Get post data for each slug
+  const rows = await Promise.all(
+    slugs.map(async (s) => {
+      const data = await kv.hgetall(`post:${s}`);
+      return { ...data, slug: s };
+    })
+  );
+  
+  return rows;
 }
 
 export async function getPost(slug: string) {
-  const r: any = await kv.hgetall(`post:${slug}`);
-  if (!r || !r.title) throw new Error("Not found");
-  return r;
+  const data = await kv.hgetall(`post:${slug}`);
+  if (!data || !data.title) throw new Error("Post not found");
+  return data;
 }
