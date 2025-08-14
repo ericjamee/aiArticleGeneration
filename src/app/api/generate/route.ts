@@ -6,6 +6,7 @@ import { injectAffiliateLinks, extractRelatedTargets, stripRelatedMarkers } from
 import { savePost, listPosts } from "@/lib/store";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST() {
   const siteName = process.env.SITE_NAME || "My Niche Site";
