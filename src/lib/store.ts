@@ -1,5 +1,11 @@
 import { kv } from "@vercel/kv";
 
+// Initialize KV with the correct environment variables
+const kvConfig = {
+  url: process.env.REDIS_URL,
+  token: process.env.KV_REST_API_TOKEN,
+};
+
 export async function savePost(slug: string, meta: any, content: string) {
   await kv.hset(`post:${slug}`, { ...meta, content });
   await kv.zadd("posts:index", { score: Date.parse(meta.date), member: slug });
