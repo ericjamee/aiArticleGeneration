@@ -1,7 +1,7 @@
 // app/page.tsx
 import Link from "next/link";
 import { listPosts } from "@/lib/store";
-import { Post } from "@/types/post";
+import type { Post } from "@/types/post";
 
 export const dynamic = "force-dynamic";
 
