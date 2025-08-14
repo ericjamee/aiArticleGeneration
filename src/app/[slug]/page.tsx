@@ -3,18 +3,19 @@ import { getPost, listPosts } from "@/lib/store";
 import { remark } from "remark";
 import html from "remark-html";
 import Link from "next/link";
+import { Post } from "@/types/post";
 
 export const dynamic = "force-dynamic";
 
 export default async function Post({ params }: { params: { slug: string } }) {
   const meta = await getPost(params.slug);
-  const processed = await remark().use(html).process(meta.content);
+  const processed = await remark().use(html).process(meta.content || "");
 
   // naive related: match keywords suggested by generator
   const all = await listPosts(100);
   const related = all
-    .filter((p: any) => p.slug !== params.slug)
-    .filter((p: any) =>
+    .filter((p: Post) => p.slug !== params.slug)
+    .filter((p: Post) =>
       (meta.relatedTargets || []).some((t: string) =>
         (p.keyword || "").toLowerCase().includes(t.toLowerCase())
       )
@@ -37,7 +38,7 @@ export default async function Post({ params }: { params: { slug: string } }) {
         <section className="mt-10">
           <h2 className="text-xl font-semibold mb-3">Related reads</h2>
           <ul className="list-disc ml-6">
-            {related.map((r: any) => (
+            {related.map((r: Post) => (
               <li key={r.slug}>
                 <Link className="text-blue-600 hover:underline" href={`/${r.slug}`}>
                   {r.title}

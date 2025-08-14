@@ -1,6 +1,7 @@
 // app/page.tsx
 import Link from "next/link";
 import { listPosts } from "@/lib/store";
+import { Post } from "@/types/post";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +41,7 @@ export default async function Home() {
           </div>
         ) : (
           <ul className="space-y-4">
-            {posts.map((p: any) => (
+            {posts.map((p: Post) => (
               <li key={p.slug}>
                 <Link className="text-blue-600 hover:underline" href={`/${p.slug}`}>{p.title}</Link>
                 <div className="text-xs text-gray-500">
