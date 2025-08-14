@@ -2,10 +2,13 @@
 import { NextResponse } from "next/server";
 import { listPosts } from "@/lib/store";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function GET() {
   const base = process.env.SITE_URL!;
   const posts = await listPosts(100);
-  const items = posts.map((p: any) => `
+  const items = posts.map((p) => `
     <item>
       <title><![CDATA[${p.title}]]></title>
       <link>${base}/${p.slug}</link>
