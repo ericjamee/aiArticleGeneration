@@ -1,6 +1,6 @@
 // app/api/generate/route.ts
 import { NextResponse } from "next/server";
-import keywords from "../../../content/keywords.json";
+import keywords from "@/data/keywords.json";
 import { writeArticle } from "@/lib/ai";
 import { injectAffiliateLinks, extractRelatedTargets, stripRelatedMarkers } from "@/lib/affiliates";
 import { savePost, listPosts } from "@/lib/store";
