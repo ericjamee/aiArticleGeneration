@@ -7,6 +7,7 @@ import { savePost, listPosts } from "@/lib/store";
 export const runtime = "nodejs";
 
 export async function POST() {
+  try {
   const siteName = process.env.SITE_NAME || "My Niche Site";
   const siteUrl  = process.env.SITE_URL  || "http://localhost:3000";
 
@@ -28,4 +29,8 @@ export async function POST() {
   await savePost(slug, meta, body);
 
   return NextResponse.json({ ok: true, slug, title });
+  } catch (error: any) {
+    console.error('Generate error:', error);
+    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
+  }
 }
