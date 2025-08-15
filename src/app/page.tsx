@@ -11,7 +11,15 @@ export default async function Home() {
       <section className="rounded border p-6 mt-8">
         <h2 className="text-xl font-semibold mb-4">Latest Articles</h2>
         {posts.length === 0 ? (
-          <div>No posts yet — <a className="text-blue-600 underline" href="/api/generate">generate one</a>.</div>
+          <div className="text-sm">
+            No posts yet —{" "}
+            <form action="/api/generate" method="post" className="inline">
+              <button type="submit" className="text-blue-600 underline">
+                generate one
+              </button>
+            </form>
+            .
+          </div>
         ) : (
           <ul className="space-y-3">
             {posts.map((p: any) => (
